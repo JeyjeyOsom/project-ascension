@@ -15,7 +15,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchHealth() {
       try {
-        const response = await fetch("http://127.0.0.1:8000/health");
+        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/health");
         const data = await response.json();
         setHealth(data);
       } catch (error) {
