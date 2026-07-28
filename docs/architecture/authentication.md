@@ -23,3 +23,27 @@
 - CORS
 - CSRF
 - Rate limiting (future)
+
+## Sequence Diagram.
+
+User
+ │
+ │ POST /auth/register
+ ▼
+API
+ │
+ │ Validate Request
+ ▼
+Auth Service
+ │
+ │ Hash Password
+ ▼
+Database
+ │
+ │ Create User
+ ▼
+API
+ │
+ │ Return Success
+ ▼
+User
