@@ -1,14 +1,28 @@
 # Authentication Architecture
 
 ## Goals
+
 - Secure authentication
 - Multi-tenant support
 - Stateless API
 
 ## Authentication Flow
+
 (Register → Login → Refresh → Logout)
 
+## API Contract
+
+- `POST /auth/register` returns `201 Created`; login, refresh, logout, and read
+  endpoints return `200 OK`.
+- Request validation errors use FastAPI's `422 Unprocessable Entity` response.
+- Application HTTP errors use FastAPI's compatible shape,
+  `{"detail": "<stable_code>"}`. Supported codes are `email_taken`,
+  `invalid_credentials`, `missing_token`, `invalid_token`,
+  `invalid_refresh_token`, `user_not_found`, `organization_not_found`, and
+  `forbidden`.
+
 ### Implemented baseline
+
 - Registration creates a user, hashes the password, and issues access/refresh tokens.
 - Login validates credentials and returns a new token pair.
 - Refresh exchanges a valid refresh token for a new access token.
@@ -16,25 +30,30 @@
 - Protected routes use bearer-token authentication through the current-user dependency.
 
 ## Token Strategy
+
 - Access Token: short-lived bearer token for API access.
 - Refresh Token: longer-lived token used to obtain a new access token.
 
 ## Authorization
+
 - Organization Owner
 - Admin
 - Member
 
 ### Organization-aware access
+
 - Users are associated with organizations through membership records.
 - Organization-scoped endpoints check membership records before allowing access.
 - The current implementation uses a simple membership check for organization access.
 
 ## Persistence Model
+
 - users
 - organizations
 - organization_memberships
 
 ## Security Considerations
+
 - Password hashing via a strong password hashing scheme.
 - HttpOnly cookies (planned for browser-based sessions).
 - CORS
@@ -44,61 +63,61 @@
 ## Sequence Diagram.
 
 User
- │
- │ POST /auth/register
- ▼
+│
+│ POST /auth/register
+▼
 API
- │
- │ Validate Request
- ▼
+│
+│ Validate Request
+▼
 Auth Service
- │
- │ Hash Password
- ▼
+│
+│ Hash Password
+▼
 Database
- │
- │ Create User
- ▼
+│
+│ Create User
+▼
 API
- │
- │ Return Success
- ▼
+│
+│ Return Success
+▼
 User
 
 ## Entity Relationship Diagram
 
 +----------------+
-|     users      |
+| users |
 +----------------+
-| id             |
-| email          |
-| username       |
-| password_hash  |
-| is_verified    |
-| created_at     |
-| updated_at     |
+| id |
+| email |
+| username |
+| password_hash |
+| is_verified |
+| created_at |
+| updated_at |
 +----------------+
-        ▲
-        │
-        │
+▲
+│
+│
 +-------------------------+
-| organization_members    |
+| organization_members |
 +-------------------------+
-| id                      |
-| organization_id         |
-| user_id                |
-| role                   |
-| created_at             |
+| id |
+| organization_id |
+| user_id |
+| role |
+| created_at |
 +-------------------------+
-        │
-        ▼
+│
+▼
 +----------------+
-| organizations  |
+| organizations |
 +----------------+
-| id             |
-| name           |
-| slug           |
-| owner_id       |
-| created_at     |
-| updated_at     |
+| id |
+| name |
+| slug |
+| owner_id |
+| created_at |
+| updated_at |
 +----------------+

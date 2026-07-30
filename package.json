@@ -4,9 +4,13 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint": "turbo run lint && npm run lint:api",
+    "lint:api": "ruff check apps/api",
+    "format": "prettier --write --ignore-unknown . && black apps/api",
+    "format:check": "prettier --check --ignore-unknown . && black --check apps/api",
+    "check-types": "turbo run check-types && npm run check-types:api",
+    "check-types:api": "mypy apps/api",
+    "test:api": "pytest apps/api/tests"
   },
   "devDependencies": {
     "prettier": "^3.7.4",

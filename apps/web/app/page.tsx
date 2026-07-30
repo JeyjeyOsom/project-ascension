@@ -15,7 +15,9 @@ export default function Home() {
   useEffect(() => {
     async function fetchHealth() {
       try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + "/health");
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL + "/health",
+        );
         const data = await response.json();
         setHealth(data);
       } catch (error) {
@@ -47,5 +49,4 @@ export default function Home() {
       )}
     </main>
   );
-  
 }
