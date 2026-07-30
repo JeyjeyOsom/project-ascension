@@ -1,13 +1,13 @@
 """Initial auth schema
 
 Revision ID: 1a2b3c4d5e6f
-Revises: 
+Revises:
 Create Date: 2026-07-29 00:00:00.000000
 
 """
-from alembic import op
-import sqlalchemy as sa
 
+import sqlalchemy as sa
+from alembic import op
 
 revision = "1a2b3c4d5e6f"
 down_revision = None
@@ -39,7 +39,9 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_organizations_slug"), "organizations", ["slug"], unique=True)
+    op.create_index(
+        op.f("ix_organizations_slug"), "organizations", ["slug"], unique=True
+    )
 
     op.create_table(
         "organization_memberships",
@@ -63,8 +65,15 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(op.f("ix_refresh_tokens_token_value"), "refresh_tokens", ["token_value"], unique=True)
-    op.create_index(op.f("ix_refresh_tokens_user_id"), "refresh_tokens", ["user_id"], unique=False)
+    op.create_index(
+        op.f("ix_refresh_tokens_token_value"),
+        "refresh_tokens",
+        ["token_value"],
+        unique=True,
+    )
+    op.create_index(
+        op.f("ix_refresh_tokens_user_id"), "refresh_tokens", ["user_id"], unique=False
+    )
 
 
 def downgrade() -> None:

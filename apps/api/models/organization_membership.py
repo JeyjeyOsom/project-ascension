@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import DateTime, Index, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import Base
@@ -8,6 +8,13 @@ from .base import Base
 
 class OrganizationMembership(Base):
     __tablename__ = "organization_memberships"
+    __table_args__ = (
+        Index(
+            "ix_organization_memberships_organization_id_user_id",
+            "organization_id",
+            "user_id",
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(64), primary_key=True)
     organization_id: Mapped[str] = mapped_column(String(64), nullable=False)

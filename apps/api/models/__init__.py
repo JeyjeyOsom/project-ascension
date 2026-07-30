@@ -1,5 +1,5 @@
-from .base import Base
-from .organization import Organization
-from .organization_membership import OrganizationMembership
-from .refresh_token import RefreshTokenModel
-from .user import User
+from .base import Base as Base
+from .organization import Organization as Organization
+from .organization_membership import OrganizationMembership as OrganizationMembership
+from .refresh_token import RefreshTokenModel as RefreshTokenModel
+from .user import User as User
