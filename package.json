@@ -4,6 +4,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:infra": "docker compose up -d postgres",
+    "dev:api": "uv run --with-requirements apps/api/requirements.txt fastapi dev apps/api/main.py --host 127.0.0.1 --port 8000",
     "lint": "turbo run lint && npm run lint:api",
     "lint:api": "ruff check apps/api",
     "format": "prettier --write --ignore-unknown . && black apps/api",

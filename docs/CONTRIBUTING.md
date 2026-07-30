@@ -56,6 +56,18 @@ Install API development dependencies before running Python checks:
 python -m pip install -r apps/api/requirements-dev.txt
 ```
 
+Start the API and its Swagger UI from the repository root:
+
+```bash
+npm run dev:infra
+npm run dev:api
+```
+
+Then open `http://127.0.0.1:8000/docs`. If running the command from `apps/`
+directly, use `uv run --with-requirements api/requirements.txt fastapi dev api/main.py`.
+The API runs migrations on startup, so PostgreSQL must be healthy first when
+`POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` are configured in `.env`.
+
 Run the full local quality gate from the repository root:
 
 ```bash
