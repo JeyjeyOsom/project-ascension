@@ -68,6 +68,17 @@ directly, use `uv run --with-requirements api/requirements.txt fastapi dev api/m
 The API runs migrations on startup, so PostgreSQL must be healthy first when
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` are configured in `.env`.
 
+To run the entire application stack in Docker instead, copy `.env.example` to
+`.env` and run:
+
+```bash
+npm run dev:docker
+```
+
+This starts the web app on port 3000, the API and Swagger UI on port 8000, and
+PostgreSQL and Redis as internal dependencies. Stop it with
+`npm run dev:docker:down`.
+
 Run the full local quality gate from the repository root:
 
 ```bash

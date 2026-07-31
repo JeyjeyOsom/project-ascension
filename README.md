@@ -42,6 +42,23 @@ The project is intentionally developed using professional engineering practices 
 - Docker Compose
 - GitHub Actions
 
+## Run with Docker Compose
+
+Copy `.env.example` to `.env` and replace the development secrets, then start
+the complete stack:
+
+```bash
+docker compose up --build
+```
+
+The web app is available at `http://localhost:3000`, the API at
+`http://localhost:8000`, and the API documentation at
+`http://localhost:8000/docs`. The API waits for PostgreSQL, runs Alembic
+migrations at startup, and the web service waits for the API health check.
+
+Use `docker compose down` to stop the stack while retaining database data, or
+`docker compose down -v` to remove the local service volumes.
+
 ### Authentication
 
 - JWT
