@@ -117,7 +117,11 @@ class AuthService:
         db.refresh(record)
         return record
 
-    def _get_refresh_token_record(self, db: Session, token: str) -> RefreshTokenModel | None:
+    def _get_refresh_token_record(
+        self,
+        db: Session,
+        token: str,
+    ) -> RefreshTokenModel | None:
         return (
             db.query(RefreshTokenModel)
             .filter(RefreshTokenModel.token_value == token)
@@ -148,10 +152,16 @@ class AuthService:
     ) -> OrganizationMembership:
         membership = self._get_user_membership(db, user_id, organization_id)
         if not membership:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="forbidden")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="forbidden",
+            )
         role_order = {"member": 1, "admin": 2, "owner": 3}
         if role_order.get(membership.role, 0) < role_order.get(minimum_role, 0):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="forbidden")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="forbidden",
+            )
         return membership
 
     def register_user(
@@ -204,7 +214,10 @@ class AuthService:
 
         tokens = self._issue_tokens(user)
         self._create_refresh_token_record(db, user.id, tokens.refresh_token)
-        return AuthenticationResponse(user=self._serialize_user(user), **tokens.model_dump())
+        return AuthenticationResponse(
+            user=self._serialize_user(user),
+            **tokens.model_dump(),
+        )
 
     def refresh_token(self, db: Session, payload: RefreshRequest) -> TokenResponse:
         payload_decoded = self._decode_token(payload.refresh_token)

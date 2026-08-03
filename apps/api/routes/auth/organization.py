@@ -1,9 +1,8 @@
-from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from apps.api.routes.auth_dependencies import AuthContextDependency, DatabaseSession
-from apps.api.schemas.auth_schema import AuthContext, OrganizationOut
+from apps.api.schemas.auth_schema import OrganizationOut
 from apps.api.services.auth_service import AuthService
 
 router = APIRouter(tags=["auth"])

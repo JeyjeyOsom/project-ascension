@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
+from apps.api.routes.auth_dependencies import DatabaseSession
 from apps.api.schemas.auth_schema import RegisterRequest, RegisterResponse
 from apps.api.services.auth_service import AuthService
-from apps.api.routes.auth_dependencies import DatabaseSession
 
 router = APIRouter(tags=["auth"])
 service = AuthService()
