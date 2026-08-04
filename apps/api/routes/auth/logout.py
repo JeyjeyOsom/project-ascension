@@ -12,8 +12,8 @@ service = AuthService()
 
 @router.post("/auth/logout", response_model=LogoutResponse)
 def logout(
+    db: DatabaseSession,
     payload: Annotated[LogoutRequest | None, Body()] = None,
-    db: DatabaseSession | None = None,
     request: Request | None = None,
     response: Response | None = None,
 ) -> LogoutResponse:
