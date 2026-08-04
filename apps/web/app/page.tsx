@@ -117,7 +117,7 @@ export default function Home() {
         router.replace("/login");
       }
     }
-  }, [session?.accessToken, session?.organizationId]);
+  }, [session?.accessToken, session?.organizationId, router]);
 
   useEffect(() => {
     if (!session?.accessToken) {
