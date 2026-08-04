@@ -56,7 +56,11 @@ export type LogoutPayload = {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
-async function request<T>(path: string, init?: RequestInit, token?: string): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+  token?: string,
+): Promise<T> {
   const headers = new Headers(init?.headers);
   headers.set("Content-Type", "application/json");
 
@@ -73,16 +77,16 @@ async function request<T>(path: string, init?: RequestInit, token?: string): Pro
 
   if (!response.ok) {
     const message =
-      typeof payload?.detail === "string"
-        ? payload.detail
-        : "Request failed";
+      typeof payload?.detail === "string" ? payload.detail : "Request failed";
     throw new Error(message);
   }
 
   return payload as T;
 }
 
-export async function registerUser(payload: RegisterPayload): Promise<RegisterResponse> {
+export async function registerUser(
+  payload: RegisterPayload,
+): Promise<RegisterResponse> {
   return request<RegisterResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -96,14 +100,18 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
   });
 }
 
-export async function refreshSession(payload: RefreshPayload): Promise<RefreshResponse> {
+export async function refreshSession(
+  payload: RefreshPayload,
+): Promise<RefreshResponse> {
   return request<RefreshResponse>("/auth/refresh", {
     method: "POST",
     body: JSON.stringify(payload),
   });
 }
 
-export async function logoutSession(payload: LogoutPayload): Promise<LogoutResponse> {
+export async function logoutSession(
+  payload: LogoutPayload,
+): Promise<LogoutResponse> {
   return request<LogoutResponse>("/auth/logout", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -114,6 +122,13 @@ export async function getCurrentUser(token: string): Promise<User> {
   return request<User>("/auth/me", undefined, token);
 }
 
-export async function getOrganization(token: string, organizationId: string): Promise<Organization> {
-  return request<Organization>(`/auth/organizations/${organizationId}`, undefined, token);
+export async function getOrganization(
+  token: string,
+  organizationId: string,
+): Promise<Organization> {
+  return request<Organization>(
+    `/auth/organizations/${organizationId}`,
+    undefined,
+    token,
+  );
 }

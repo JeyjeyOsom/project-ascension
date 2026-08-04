@@ -6,7 +6,11 @@ type AuthFormProps = {
   title: string;
   subtitle: string;
   submitLabel: string;
-  onSubmit: (values: { email: string; password: string; username?: string }) => Promise<void>;
+  onSubmit: (values: {
+    email: string;
+    password: string;
+    username?: string;
+  }) => Promise<void>;
   showUsername?: boolean;
 };
 
@@ -29,7 +33,11 @@ export function AuthForm({
     setMessage(null);
 
     try {
-      await onSubmit({ email, password, username: showUsername ? username : undefined });
+      await onSubmit({
+        email,
+        password,
+        username: showUsername ? username : undefined,
+      });
       setMessage("Success");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Request failed");
@@ -39,7 +47,10 @@ export function AuthForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+    >
       <div>
         <h2 className="text-xl font-semibold text-slate-900">{title}</h2>
         <p className="mt-1 text-sm text-slate-600">{subtitle}</p>

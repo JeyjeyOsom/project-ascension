@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from apps.api.routes.auth_dependencies import AuthContextDependency, DatabaseSession

@@ -164,9 +164,7 @@ class AuthService:
             )
         return membership
 
-    def register_user(
-        self, db: Session, payload: RegisterRequest
-    ) -> RegisterResponse:
+    def register_user(self, db: Session, payload: RegisterRequest) -> RegisterResponse:
         if self.repository.get_by_email(db, str(payload.email)):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="email_taken"

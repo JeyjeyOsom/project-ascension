@@ -12,6 +12,7 @@
     "lint:api": "ruff check apps/api",
     "format": "prettier --write --ignore-unknown . && black apps/api",
     "format:check": "prettier --check --ignore-unknown . && black --check apps/api",
+    "format:fix": "prettier --write --ignore-unknown . && black apps/api",
     "check-types": "turbo run check-types && npm run check-types:api",
     "check-types:api": "mypy apps/api",
     "test:api": "pytest apps/api/tests"

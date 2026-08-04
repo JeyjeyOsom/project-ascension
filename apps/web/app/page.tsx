@@ -3,7 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { AuthForm } from "@/components/auth-form";
 import { StatusBanner } from "@/components/status-banner";
-import { getCurrentUser, getOrganization, loginUser, logoutSession, registerUser } from "@/lib/api";
+import {
+  getCurrentUser,
+  getOrganization,
+  loginUser,
+  logoutSession,
+  registerUser,
+} from "@/lib/api";
 
 const STORAGE_KEY = "project-ascension-session";
 
@@ -45,7 +51,11 @@ function loadSession() {
 
 export default function Home() {
   const [session, setSession] = useState<SessionState | null>(null);
-  const [status, setStatus] = useState<{ kind: "success" | "error" | "info"; title: string; message?: string } | null>(null);
+  const [status, setStatus] = useState<{
+    kind: "success" | "error" | "info";
+    title: string;
+    message?: string;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -89,9 +99,18 @@ export default function Home() {
             }
           : null,
       );
-      setStatus({ kind: "info", title: "Profile loaded", message: "Your account details are ready." });
+      setStatus({
+        kind: "info",
+        title: "Profile loaded",
+        message: "Your account details are ready.",
+      });
     } catch (error) {
-      setStatus({ kind: "error", title: "Profile unavailable", message: error instanceof Error ? error.message : "Unable to load profile" });
+      setStatus({
+        kind: "error",
+        title: "Profile unavailable",
+        message:
+          error instanceof Error ? error.message : "Unable to load profile",
+      });
     }
   }, [session?.accessToken, session?.organizationId]);
 
@@ -104,7 +123,10 @@ export default function Home() {
   }, [loadProfile, session?.accessToken]);
 
   async function handleLogin(values: { email: string; password: string }) {
-    const result = await loginUser({ email: values.email, password: values.password });
+    const result = await loginUser({
+      email: values.email,
+      password: values.password,
+    });
     const nextSession = {
       accessToken: result.access_token,
       refreshToken: result.refresh_token,
@@ -114,10 +136,18 @@ export default function Home() {
     };
 
     setSession(nextSession);
-    setStatus({ kind: "success", title: "Signed in", message: `Welcome back, ${result.user.username}.` });
+    setStatus({
+      kind: "success",
+      title: "Signed in",
+      message: `Welcome back, ${result.user.username}.`,
+    });
   }
 
-  async function handleRegister(values: { email: string; password: string; username?: string }) {
+  async function handleRegister(values: {
+    email: string;
+    password: string;
+    username?: string;
+  }) {
     const fallbackUsername = values.email.split("@", 1)[0] ?? "user";
     const result = await registerUser({
       email: values.email,
@@ -134,7 +164,11 @@ export default function Home() {
     };
 
     setSession(nextSession);
-    setStatus({ kind: "success", title: "Account created", message: "Your organization has also been prepared." });
+    setStatus({
+      kind: "success",
+      title: "Account created",
+      message: "Your organization has also been prepared.",
+    });
   }
 
   async function handleLogout() {
@@ -153,7 +187,11 @@ export default function Home() {
   }
 
   if (loading) {
-    return <main className="min-h-screen bg-slate-50 p-8 text-slate-700">Loading...</main>;
+    return (
+      <main className="min-h-screen bg-slate-50 p-8 text-slate-700">
+        Loading...
+      </main>
+    );
   }
 
   return (
@@ -162,11 +200,17 @@ export default function Home() {
         <header className="rounded-3xl border border-slate-200 bg-white/80 px-6 py-5 shadow-sm backdrop-blur">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.25em] text-slate-500">Project Ascension</p>
-              <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">Modern auth workspace</h1>
+              <p className="text-sm font-medium uppercase tracking-[0.25em] text-slate-500">
+                Project Ascension
+              </p>
+              <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
+                Modern auth workspace
+              </h1>
             </div>
             <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-              {session?.user ? `Signed in as ${session.user.username}` : "Ready for sign in"}
+              {session?.user
+                ? `Signed in as ${session.user.username}`
+                : "Ready for sign in"}
             </div>
           </div>
         </header>
@@ -180,15 +224,27 @@ export default function Home() {
         {!session?.user ? (
           <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Overview</p>
-              <h2 className="mt-2 text-2xl font-semibold text-slate-900">A calm, modular entrypoint for your API.</h2>
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+                Overview
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+                A calm, modular entrypoint for your API.
+              </h2>
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
-                This experience surfaces the current authentication flows with a minimal layout and clear state handling.
+                This experience surfaces the current authentication flows with a
+                minimal layout and clear state handling.
               </p>
               <ul className="mt-6 space-y-3 text-sm text-slate-600">
-                <li>• Register and sign in with the existing backend endpoints.</li>
-                <li>• View your profile and organization after authentication.</li>
-                <li>• Keep session data in local storage for a simple single-device experience.</li>
+                <li>
+                  • Register and sign in with the existing backend endpoints.
+                </li>
+                <li>
+                  • View your profile and organization after authentication.
+                </li>
+                <li>
+                  • Keep session data in local storage for a simple
+                  single-device experience.
+                </li>
               </ul>
             </div>
             <div className="space-y-6">
@@ -212,8 +268,12 @@ export default function Home() {
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Account</p>
-                  <h2 className="mt-1 text-2xl font-semibold text-slate-900">Welcome back</h2>
+                  <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+                    Account
+                  </p>
+                  <h2 className="mt-1 text-2xl font-semibold text-slate-900">
+                    Welcome back
+                  </h2>
                 </div>
                 <button
                   onClick={() => void handleLogout()}
@@ -226,19 +286,31 @@ export default function Home() {
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-sm font-medium text-slate-500">User</p>
-                  <p className="mt-2 text-lg font-semibold text-slate-900">{session.user?.username}</p>
-                  <p className="text-sm text-slate-600">{session.user?.email}</p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {session.user?.username}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {session.user?.email}
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-medium text-slate-500">Organization</p>
-                  <p className="mt-2 text-lg font-semibold text-slate-900">{session.organization?.name ?? "Pending"}</p>
-                  <p className="text-sm text-slate-600">{session.organization?.slug ?? "Load organization details"}</p>
+                  <p className="text-sm font-medium text-slate-500">
+                    Organization
+                  </p>
+                  <p className="mt-2 text-lg font-semibold text-slate-900">
+                    {session.organization?.name ?? "Pending"}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    {session.organization?.slug ?? "Load organization details"}
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">Session actions</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+                Session actions
+              </p>
               <div className="mt-4 space-y-3 text-sm text-slate-600">
                 <button
                   onClick={() => void loadProfile()}
@@ -248,7 +320,9 @@ export default function Home() {
                 </button>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                   <p className="font-medium text-slate-700">Access token</p>
-                  <p className="mt-1 break-all text-xs text-slate-500">{session.accessToken.slice(0, 24)}...</p>
+                  <p className="mt-1 break-all text-xs text-slate-500">
+                    {session.accessToken.slice(0, 24)}...
+                  </p>
                 </div>
               </div>
             </div>
