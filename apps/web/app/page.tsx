@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AuthForm } from "@/components/auth-form";
 import { StatusBanner } from "@/components/status-banner";
@@ -50,6 +51,7 @@ function loadSession() {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [session, setSession] = useState<SessionState | null>(null);
   const [status, setStatus] = useState<{
     kind: "success" | "error" | "info";
@@ -111,6 +113,9 @@ export default function Home() {
         message:
           error instanceof Error ? error.message : "Unable to load profile",
       });
+      if (error instanceof Error && error.message === "token_expired") {
+        router.replace("/login");
+      }
     }
   }, [session?.accessToken, session?.organizationId]);
 
@@ -141,6 +146,7 @@ export default function Home() {
       title: "Signed in",
       message: `Welcome back, ${result.user.username}.`,
     });
+    router.replace("/");
   }
 
   async function handleRegister(values: {

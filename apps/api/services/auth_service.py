@@ -1,12 +1,9 @@
 import os
-import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, cast
+from typing import Any
 
-import jwt
 from fastapi import HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from apps.api.models.organization import Organization
@@ -27,47 +24,32 @@ from apps.api.schemas.auth_schema import (
     TokenResponse,
     UserOut,
 )
+from apps.api.services.jwt_service import JWTService
+from apps.api.services.password_service import PasswordService
 
-SECRET_KEY = os.getenv(
-    "JWT_SECRET_KEY", "dev-secret-change-me-please-set-a-strong-secret"
-)
-ALGORITHM = "HS256"
 ACCESS_TOKEN_TTL = int(os.getenv("ACCESS_TOKEN_TTL_SECONDS", "900"))
 REFRESH_TOKEN_TTL = int(os.getenv("REFRESH_TOKEN_TTL_SECONDS", "604800"))
-
-pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
 class AuthService:
     def __init__(self, repository: UserRepository | None = None) -> None:
         self.repository = repository or UserRepository()
+        self.password_service = PasswordService()
+        self.jwt_service = JWTService()
 
     def _now(self) -> datetime:
         return datetime.now(timezone.utc)
 
-    def _create_token(self, subject: str, ttl_seconds: int) -> str:
-        now = self._now()
-        payload = {
-            "sub": subject,
-            "iat": int(now.timestamp()),
-            "exp": int((now + timedelta(seconds=ttl_seconds)).timestamp()),
-            "jti": str(uuid.uuid4()),
-        }
-        return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-    def _decode_token(self, token: str) -> dict[str, Any]:
-        try:
-            return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        except jwt.InvalidTokenError as exc:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid_token"
-            ) from exc
-
     def _hash_password(self, password: str) -> str:
-        return cast(str, pwd_context.hash(password))
+        return self.password_service.hash(password)
 
     def _verify_password(self, password: str, password_hash: str) -> bool:
-        return cast(bool, pwd_context.verify(password, password_hash))
+        return self.password_service.verify(password, password_hash)
+
+    def _decode_token(
+        self, token: str, expected_type: str | None = None
+    ) -> dict[str, Any]:
+        return self.jwt_service.verify_token(token, expected_type=expected_type)
 
     def _serialize_user(self, user: User) -> UserOut:
         return UserOut(
@@ -78,8 +60,8 @@ class AuthService:
         )
 
     def _issue_tokens(self, user: User) -> TokenResponse:
-        access_token = self._create_token(user.id, ACCESS_TOKEN_TTL)
-        refresh_token = self._create_token(user.id, REFRESH_TOKEN_TTL)
+        access_token = self.jwt_service.create_access_token(user.id)
+        refresh_token = self.jwt_service.create_refresh_token(user.id)
         return TokenResponse(access_token=access_token, refresh_token=refresh_token)
 
     def _create_refresh_token_record(
@@ -218,7 +200,9 @@ class AuthService:
         )
 
     def refresh_token(self, db: Session, payload: RefreshRequest) -> TokenResponse:
-        payload_decoded = self._decode_token(payload.refresh_token)
+        payload_decoded = self._decode_token(
+            payload.refresh_token, expected_type="refresh"
+        )
         user_id = payload_decoded.get("sub")
         if not user_id:
             raise HTTPException(
@@ -258,7 +242,9 @@ class AuthService:
         return tokens
 
     def logout(self, db: Session, payload: LogoutRequest) -> LogoutResponse:
-        payload_decoded = self._decode_token(payload.refresh_token)
+        payload_decoded = self._decode_token(
+            payload.refresh_token, expected_type="refresh"
+        )
         user_id = payload_decoded.get("sub")
         if not user_id:
             raise HTTPException(
@@ -280,7 +266,7 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="missing_token"
             )
 
-        payload = self._decode_token(credentials.credentials)
+        payload = self._decode_token(credentials.credentials, expected_type="access")
         user_id = payload.get("sub")
         if not user_id:
             raise HTTPException(

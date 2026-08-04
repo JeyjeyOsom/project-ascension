@@ -71,6 +71,7 @@ async function request<T>(
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers,
+    credentials: "include",
   });
 
   const payload = await response.json().catch(() => null);
@@ -101,11 +102,11 @@ export async function loginUser(payload: LoginPayload): Promise<LoginResponse> {
 }
 
 export async function refreshSession(
-  payload: RefreshPayload,
+  payload?: RefreshPayload,
 ): Promise<RefreshResponse> {
   return request<RefreshResponse>("/auth/refresh", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: payload ? JSON.stringify(payload) : undefined,
   });
 }
 
