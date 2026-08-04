@@ -69,11 +69,15 @@ def test_auth_service_verifies_token_type_and_signature() -> None:
         result = service.register_user(db, payload)
 
         access_token = result.access_token
-        access_claims = service.jwt_service.verify_token(access_token, expected_type="access")
+        access_claims = service.jwt_service.verify_token(
+            access_token, expected_type="access"
+        )
         assert access_claims["sub"] == result.user.id
 
         refresh_token = result.refresh_token
-        refresh_claims = service.jwt_service.verify_token(refresh_token, expected_type="refresh")
+        refresh_claims = service.jwt_service.verify_token(
+            refresh_token, expected_type="refresh"
+        )
         assert refresh_claims["sub"] == result.user.id
 
         try:

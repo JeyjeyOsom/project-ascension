@@ -6,10 +6,14 @@ from typing import Any
 import jwt
 from fastapi import HTTPException, status
 
-JWT_SECRET = os.getenv("JWT_SECRET_KEY", "dev-secret-change-me-please-set-a-strong-secret")
+JWT_SECRET = os.getenv(
+    "JWT_SECRET_KEY", "dev-secret-change-me-please-set-a-strong-secret"
+)
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_TTL_SECONDS", "900")) // 60
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_TTL_SECONDS", "604800")) // 86400
+REFRESH_TOKEN_EXPIRE_DAYS = (
+    int(os.getenv("REFRESH_TOKEN_TTL_SECONDS", "604800")) // 86400
+)
 
 
 class JWTService:
@@ -19,7 +23,9 @@ class JWTService:
     def create_refresh_token(self, subject: str) -> str:
         return self._create_token(subject=subject, token_type="refresh")
 
-    def verify_token(self, token: str, expected_type: str | None = None) -> dict[str, Any]:
+    def verify_token(
+        self, token: str, expected_type: str | None = None
+    ) -> dict[str, Any]:
         try:
             payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         except jwt.ExpiredSignatureError as exc:

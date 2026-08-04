@@ -74,7 +74,9 @@ def test_expired_and_invalid_signature_tokens_are_rejected() -> None:
         "jti": "expired-token",
     }
     expired_token = jwt.encode(
-        expired_payload, "test-secret-key-with-at-least-32-characters", algorithm="HS256"
+        expired_payload,
+        "test-secret-key-with-at-least-32-characters",
+        algorithm="HS256",
     )
 
     expired_response = client.get(
@@ -85,7 +87,11 @@ def test_expired_and_invalid_signature_tokens_are_rejected() -> None:
     assert expired_response.json() == {"detail": "token_expired"}
 
     invalid_signature_token = jwt.encode(
-        {"sub": "user_123", "type": "access", "exp": int((now + timedelta(minutes=15)).timestamp())},
+        {
+            "sub": "user_123",
+            "type": "access",
+            "exp": int((now + timedelta(minutes=15)).timestamp()),
+        },
         "different-secret",
         algorithm="HS256",
     )
@@ -121,4 +127,6 @@ def test_refresh_flow_issues_a_new_access_token() -> None:
         json={"refresh_token": login_response.json()["refresh_token"]},
     )
     assert refresh_response.status_code == 200
-    assert refresh_response.json()["access_token"] != login_response.json()["access_token"]
+    assert (
+        refresh_response.json()["access_token"] != login_response.json()["access_token"]
+    )
