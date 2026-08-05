@@ -13,8 +13,8 @@ service = AuthService()
 @router.post("/auth/refresh", response_model=TokenResponse)
 def refresh(
     db: DatabaseSession,
-    request: Request ,
-    response: Response ,
+    request: Request,
+    response: Response,
     payload: Annotated[RefreshRequest | None, Body()] = None,
 ) -> TokenResponse:
     token_value = (
