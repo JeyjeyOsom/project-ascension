@@ -1,31 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthForm } from "@/components/auth-form";
-import { loginUser } from "@/lib/api";
+import { useAuth } from "@/components/providers/auth-provider";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   async function handleLogin(values: { email: string; password: string }) {
     try {
-      const result = await loginUser({
-        email: values.email,
-        password: values.password,
-      });
-      window.localStorage.setItem(
-        "project-ascension-session",
-        JSON.stringify({
-          accessToken: result.access_token,
-          refreshToken: result.refresh_token,
-          organizationId: null,
-          user: result.user,
-          organization: null,
-        }),
-      );
-      router.replace("/");
+      await login(values.email, values.password);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in");
       throw cause;

@@ -1,7 +1,11 @@
+import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy import inspect
 
+from apps.api.db import SessionLocal
 from apps.api.main import app, engine
+from apps.api.routes.auth_dependencies import get_current_user
 
 client = TestClient(app)
 
@@ -52,6 +56,17 @@ def test_register_login_refresh_and_me_flow() -> None:
     )
     assert logout_response.status_code == 200
     assert logout_response.json()["message"] == "logged_out"
+
+
+def test_current_user_dependency_rejects_missing_token() -> None:
+    db = SessionLocal()
+    try:
+        with pytest.raises(HTTPException) as exc_info:
+            get_current_user(None, db)
+        assert exc_info.value.status_code == 401
+        assert exc_info.value.detail == "missing_token"
+    finally:
+        db.close()
 
 
 def test_refresh_token_rotation_and_revocation() -> None:
