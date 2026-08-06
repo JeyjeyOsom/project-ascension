@@ -21,4 +21,12 @@ def get_current_auth_context(
     return service.get_current_auth_context(db, credentials)
 
 
+def get_current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(security)],
+    db: Annotated[Session, Depends(get_db)],
+) -> AuthContext:
+    return service.get_current_auth_context(db, credentials)
+
+
 AuthContextDependency = Annotated[AuthContext, Depends(get_current_auth_context)]
+CurrentUserDependency = Annotated[AuthContext, Depends(get_current_user)]
